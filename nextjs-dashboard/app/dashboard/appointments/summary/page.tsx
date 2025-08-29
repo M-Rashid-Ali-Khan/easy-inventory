@@ -34,8 +34,7 @@ export default function Page(): React.JSX.Element {
             message: {
               role: "assistant",
               content:
-                "The schedule includes two consecutive confirmed bookings on the same calendar. The first appointment runs from 11 p.m. on August 21, 2025 to 3:30 a.m. on August 22, 2025, and the second follows immediately, lasting from 3:30 a.m. to 7:30 a.m. on August 22, 2025. Both are marked as booked and confirmed."
-,
+                "The schedule includes two consecutive confirmed bookings on the same calendar. The first appointment runs from 11 p.m. on August 21, 2025 to 3:30 a.m. on August 22, 2025, and the second follows immediately, lasting from 3:30 a.m. to 7:30 a.m. on August 22, 2025. Both are marked as booked and confirmed.",
             },
           },
         ],
@@ -72,7 +71,7 @@ export default function Page(): React.JSX.Element {
     })
       .then((response) => response.json())
       .then((data) => {
-        inference(data, true);
+        inference(data);
       })
       .catch((error) => {
         console.error("Error fetching appointments:", error);

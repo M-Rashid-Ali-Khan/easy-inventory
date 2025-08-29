@@ -22,7 +22,11 @@
   "name": "Rashid",
   "phone": "0321-9876543",
   "cnic": "12345-6789012-3",
-  "assignedRegion": "North Punjab",
+  "address": {
+    "street": "Main Market",
+    "city": "Rawalpindi",
+    "province": "Punjab"
+  }
   "joinedAt": "2025-01-01T12:00:00Z"
 }
 
