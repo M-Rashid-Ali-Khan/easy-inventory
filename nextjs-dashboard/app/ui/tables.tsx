@@ -17,7 +17,8 @@ export type Column<T> = {
 export type TableProps<T> = {
   data: T[];
   columns: Column<T>[];
-  onUpdate: (rowIndex: number, key: keyof T, value: any) => void;
+  onSave: (rowIndex: number, row: T) => void; // ✅ save callback
+  onDelete?: (rowIndex: number, row: T) => void;
   page?: number;
   pageSize?: number;
 };
@@ -82,23 +83,6 @@ export function SelectCell<T>(
   );
 }
 
-export function ActionCell<T>(
-  _: any,
-  row: T,
-  __: boolean,
-  ___: (v: any) => void,
-  onAction: (row: T) => void
-) {
-  return (
-    <button
-      className="text-blue-500 hover:underline"
-      onClick={() => onAction(row)}
-    >
-      Action
-    </button>
-  );
-}
-
 // Non-editable cell renderer
 export function NonEditableCell<T>(value: any) {
   return <span>{value}</span>;
@@ -107,11 +91,13 @@ export function NonEditableCell<T>(value: any) {
 export default function Table<T>({
   data,
   columns,
-  onUpdate,
+  onSave,
+  onDelete,
   page = 1,
   pageSize = 20,
 }: TableProps<T>) {
   const [editingRow, setEditingRow] = useState<number | null>(null);
+  const [editedRow, setEditedRow] = useState<Partial<T>>({});
 
   return (
     <div className="overflow-x-auto">
@@ -132,6 +118,8 @@ export default function Table<T>({
         <tbody>
           {data.map((row, rowIndex) => {
             const isEditing = editingRow === rowIndex;
+            const currentRow = { ...row, ...editedRow } as T;
+
             return (
               <tr
                 key={rowIndex}
@@ -141,28 +129,47 @@ export default function Table<T>({
                   <td key={String(col.key)} className="px-4 py-2 text-sm">
                     {col.render
                       ? col.render(
-                          row[col.key],
-                          row,
+                          currentRow[col.key],
+                          currentRow,
                           isEditing,
-                          (newValue) => onUpdate(rowIndex, col.key, newValue)
+                          (newValue) =>
+                            setEditedRow((prev) => ({
+                              ...prev,
+                              [col.key]: newValue,
+                            }))
                         )
-                      : String(row[col.key])}
+                      : String(currentRow[col.key])}
                   </td>
                 ))}
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 flex gap-3">
                   {isEditing ? (
                     <button
-                      className="text-green-500"
-                      onClick={() => setEditingRow(null)}
+                      className="text-green-500 hover:underline"
+                      onClick={() => {
+                        onSave(rowIndex, currentRow); // ✅ fire once with full row
+                        setEditingRow(null);
+                        setEditedRow({});
+                      }}
                     >
                       Save
                     </button>
                   ) : (
                     <button
-                      className="text-blue-500"
-                      onClick={() => setEditingRow(rowIndex)}
+                      className="text-blue-500 hover:underline"
+                      onClick={() => {
+                        setEditingRow(rowIndex);
+                        setEditedRow(row); // preload with current row
+                      }}
                     >
                       Edit
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button
+                      className="text-red-500 hover:underline"
+                      onClick={() => onDelete(rowIndex, row)}
+                    >
+                      Delete
                     </button>
                   )}
                 </td>
