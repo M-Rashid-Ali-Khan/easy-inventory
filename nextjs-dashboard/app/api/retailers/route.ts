@@ -6,85 +6,84 @@ type Address = {
   province: string;
 };
 
-type Booker = {
+type Retailer = {
   _id: string;
   name: string;
+  ownerName: string;
   phone: string;
-  cnic: string;
   address: Address;
-  joinedAt: string;
+  createdAt: string;
 };
 
 // Fake in-memory DB for demo
-// let bookers: Booker[] = [];
+// let retailers: Retailer[] = [];
 
-let bookers: Booker[] = [
+let retailers: Retailer[] = [
   {
-    _id: "1756697148722",
-    name: "Rexx",
-    phone: "0300-1234567",
-    cnic: "35202-1234567-1",
+    _id: "2001697148722",
+    name: "Tech Hub",
+    ownerName: "Ahmed Malik",
+    phone: "0301-9988776",
     address: {
-      street: "12A Main Street",
+      street: "101 IT Tower",
       city: "Lahore",
       province: "Punjab",
     },
-    joinedAt: "2025-08-20",
+    createdAt: "2025-08-15",
   },
   {
-    _id: "1756697148723",
-    name: "Zara Khan",
-    phone: "0321-7654321",
-    cnic: "42101-9876543-2",
+    _id: "2001697148723",
+    name: "City Mart",
+    ownerName: "Farah Javed",
+    phone: "0322-4455667",
     address: {
-      street: "45 Defence Road",
+      street: "Block B, Gulshan",
       city: "Karachi",
       province: "Sindh",
     },
-    joinedAt: "2025-08-25",
+    createdAt: "2025-08-18",
   },
   {
-    _id: "1756697148724",
-    name: "Ali Raza",
-    phone: "0345-1122334",
-    cnic: "61101-5678901-3",
+    _id: "2001697148724",
+    name: "Electro World",
+    ownerName: "Hassan Tariq",
+    phone: "0333-7788990",
     address: {
-      street: "7 Saddar Bazar",
-      city: "Rawalpindi",
+      street: "Mall Road",
+      city: "Faisalabad",
       province: "Punjab",
     },
-    joinedAt: "2025-08-30",
+    createdAt: "2025-08-28",
   },
 ];
 
-
-// GET /api/bookers
+// GET /api/retailers
 export async function GET() {
-  return NextResponse.json(bookers);
+  return NextResponse.json(retailers);
 }
 
-// POST /api/bookers
+// POST /api/retailers
 export async function POST(req: Request) {
   const data = await req.json();
 
-  const newBooker: Booker = {
-    _id: data.id || Date.now().toString(), // unique id as string
+  const newRetailer: Retailer = {
+    _id: data.id || Date.now().toString(),
     name: data.name,
+    ownerName: data.ownerName,
     phone: data.phone,
-    cnic: data.cnic,
     address: {
       street: data.address?.street || "",
       city: data.address?.city || "",
       province: data.address?.province || "",
     },
-    joinedAt: new Date().toISOString().split("T")[0],
+    createdAt: new Date().toISOString().split("T")[0],
   };
 
-  bookers.push(newBooker);
-  return NextResponse.json(newBooker, { status: 201 });
+  retailers.push(newRetailer);
+  return NextResponse.json(newRetailer, { status: 201 });
 }
 
-// DELETE /api/bookers?id=123
+// DELETE /api/retailers?id=123
 export async function DELETE(req: Request) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
@@ -93,11 +92,11 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Missing id" }, { status: 400 });
   }
 
-  bookers = bookers.filter((b) => b._id !== id);
+  retailers = retailers.filter((r) => r._id !== id);
   return NextResponse.json({ success: true });
 }
 
-// PUT /api/bookers?id=123
+// PUT /api/retailers?id=123
 export async function PUT(req: Request) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
@@ -105,21 +104,21 @@ export async function PUT(req: Request) {
   if (!id) {
     return NextResponse.json({ error: "Missing id" }, { status: 400 });
   }
-  console.log("Received PUT for id:", id);
+
   const data = await req.json();
 
-  bookers = bookers.map((b) =>
-    b._id === id
+  retailers = retailers.map((r) =>
+    r._id === id
       ? {
-          ...b,
+          ...r,
           ...data,
           address: {
-            street: data.address?.street ?? b.address.street,
-            city: data.address?.city ?? b.address.city,
-            province: data.address?.province ?? b.address.province,
+            street: data.address?.street ?? r.address.street,
+            city: data.address?.city ?? r.address.city,
+            province: data.address?.province ?? r.address.province,
           },
         }
-      : b
+      : r
   );
 
   return NextResponse.json({ success: true });

@@ -94,7 +94,7 @@
   "active": true,
   "createdAt": "2025-07-15T12:00:00Z"
 }
-
+//// Types:
 {
   "type": "bonus",
   "rules": { "buyQty": 12, "getQty": 3 }
